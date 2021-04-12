@@ -1,4 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
+subdir-y	+= loongson
+
+obj-$(CONFIG_BUILTIN_DTB)	:= $(addsuffix /, $(subdir-y))
 
 dtb-y = loongson-2k0500-ref.dtb loongson-2k1000-ref.dtb loongson-2k2000-ref.dtb
 
