@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config DRM_LSDC
+	tristate "DRM support for Loongson Display Controller"
+	depends on DRM && PCI
+	depends on LOONGARCH || MIPS || COMPILE_TEST
+	depends on OF
+	select DRM_KMS_HELPER
+	select DRM_TTM
+	select DRM_TTM_HELPER
+	help
+	  This is a KMS driver for loongson display controller in the
+	  LS7A1000/LS7A2000 bridge chip and LS2K2000/LS2K1000/LS2K0500
+	  SoC. If "M" is selected, the module will be called lsdc.
+
+	  If in doubt, say "N".
