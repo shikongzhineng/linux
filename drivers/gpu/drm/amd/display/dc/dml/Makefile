@@ -33,6 +33,15 @@ ifdef CONFIG_PPC64
 dml_ccflags := -mhard-float -maltivec
 endif
 
+ifdef CONFIG_ARM64
+dml_rcflags := -mgeneral-regs-only
+endif
+
+ifdef CONFIG_LOONGARCH
+dml_ccflags := -mabi=lp64s -mfpu=64
+dml_rcflags := -msoft-float
+endif
+
 ifdef CONFIG_CC_IS_GCC
 ifneq ($(call gcc-min-version, 70100),y)
 IS_OLD_GCC = 1
