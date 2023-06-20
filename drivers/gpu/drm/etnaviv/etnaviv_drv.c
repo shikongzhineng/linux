@@ -5,8 +5,10 @@
 
 #include <linux/component.h>
 #include <linux/dma-mapping.h>
+#include <linux/dma-map-ops.h>
 #include <linux/module.h>
 #include <linux/of.h>
+#include <linux/of_address.h>
 #include <linux/of_device.h>
 #include <linux/platform_device.h>
 #include <linux/uaccess.h>
@@ -25,6 +27,34 @@
 #include "etnaviv_mmu.h"
 #include "etnaviv_pci_drv.h"
 #include "etnaviv_perfmon.h"
+
+static struct device_node *etnaviv_of_first_available_node(void)
+{
+	struct device_node *core_node;
+
+	for_each_compatible_node(core_node, NULL, "vivante,gc") {
+		if (of_device_is_available(core_node))
+			return core_node;
+	}
+
+	return NULL;
+}
+
+static bool etnaviv_is_dma_coherent(struct device *dev)
+{
+	struct device_node *np;
+	bool coherent;
+
+	np = etnaviv_of_first_available_node();
+	if (np) {
+		coherent = of_dma_is_coherent(np);
+		of_node_put(np);
+	} else {
+		coherent = dev_is_dma_coherent(dev);
+	}
+
+	return coherent;
+}
 
 /*
  * etnaviv private data construction and destructions:
@@ -53,6 +83,11 @@ etnaviv_alloc_private(struct device *dev, struct drm_device *drm)
 		dev_err(dev, "Failed to create cmdbuf suballocator\n");
 		return ERR_PTR(-ENOMEM);
 	}
+
+	priv->dma_coherent = etnaviv_is_dma_coherent(dev);
+
+	if (priv->dma_coherent)
+		drm_info(drm, "%s is dma coherent\n", dev_name(dev));
 
 	return priv;
 }
