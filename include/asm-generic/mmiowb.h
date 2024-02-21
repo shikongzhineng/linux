@@ -40,13 +40,13 @@ static inline void mmiowb_set_pending(void)
 		ms->mmiowb_pending = ms->nesting_count;
 }
 
-static inline void mmiowb_spin_lock(void)
+static inline void mmiowb_in_lock(void)
 {
 	struct mmiowb_state *ms = __mmiowb_state();
 	ms->nesting_count++;
 }
 
-static inline void mmiowb_spin_unlock(void)
+static inline void mmiowb_in_unlock(void)
 {
 	struct mmiowb_state *ms = __mmiowb_state();
 
@@ -59,7 +59,7 @@ static inline void mmiowb_spin_unlock(void)
 }
 #else
 #define mmiowb_set_pending()		do { } while (0)
-#define mmiowb_spin_lock()		do { } while (0)
-#define mmiowb_spin_unlock()		do { } while (0)
+#define mmiowb_in_lock()		do { } while (0)
+#define mmiowb_in_unlock()		do { } while (0)
 #endif	/* CONFIG_MMIOWB */
 #endif	/* __ASM_GENERIC_MMIOWB_H */

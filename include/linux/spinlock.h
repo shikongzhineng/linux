@@ -185,7 +185,7 @@ static inline void do_raw_spin_lock(raw_spinlock_t *lock) __acquires(lock)
 {
 	__acquire(lock);
 	arch_spin_lock(&lock->raw_lock);
-	mmiowb_spin_lock();
+	mmiowb_in_lock();
 }
 
 static inline int do_raw_spin_trylock(raw_spinlock_t *lock)
@@ -193,14 +193,14 @@ static inline int do_raw_spin_trylock(raw_spinlock_t *lock)
 	int ret = arch_spin_trylock(&(lock)->raw_lock);
 
 	if (ret)
-		mmiowb_spin_lock();
+		mmiowb_in_lock();
 
 	return ret;
 }
 
 static inline void do_raw_spin_unlock(raw_spinlock_t *lock) __releases(lock)
 {
-	mmiowb_spin_unlock();
+	mmiowb_in_unlock();
 	arch_spin_unlock(&lock->raw_lock);
 	__release(lock);
 }
